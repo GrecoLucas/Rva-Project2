@@ -1,0 +1,108 @@
+# =====================================================================
+#  Arcane Restoration - .gitignore
+#  Fica na raiz do projeto Unity (a raiz do repositorio).
+#  Base: https://github.com/github/gitignore/blob/main/Unity.gitignore
+# =====================================================================
+
+# ---------------------------------------------------------------------
+# Pastas geradas pelo Unity (NUNCA commitar - sao recriadas ao abrir)
+# ---------------------------------------------------------------------
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+/[Mm]emoryCaptures/
+/[Rr]ecordings/
+/.utmp/
+
+# Builds (APK do Quest, build de Windows, etc.)
+/[Bb]uild/
+/[Bb]uilds/
+*.apk
+*.aab
+*.app
+
+# Cenas de recuperacao criadas pelo Unity depois de um crash
+/[Aa]ssets/_Recovery/
+/[Aa]ssets/_Recovery.meta
+
+# Cenas geradas pelos testes de Play Mode
+/[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
+
+# Pacotes de importacao (o conteudo importado e que vai para o git)
+*.unitypackage
+*.unitypackage.meta
+
+# Backups do Blender (o .blend em si pode ser commitado)
+*.blend1
+*.blend1.meta
+
+# ---------------------------------------------------------------------
+# IDEs e ficheiros de solucao (gerados pelo Unity em cada maquina)
+# ---------------------------------------------------------------------
+*.csproj
+*.unityproj
+*.sln
+*.slnx
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+*.tmp
+ExportedObj/
+.consulo/
+.vs/
+.vscode/
+.idea/
+*.DotSettings.user
+/[Aa]ssets/Plugins/Editor/JetBrains*
+
+# Gradle (builds Android)
+.gradle/
+
+# ---------------------------------------------------------------------
+# Logs e relatorios de crash
+# ---------------------------------------------------------------------
+*.log
+sysinfo.txt
+mono_crash.*
+crashlytics-build.properties
+
+# ---------------------------------------------------------------------
+# Addressables / Visual Scripting (caso venham a ser usados)
+# ---------------------------------------------------------------------
+/ServerData/
+/[Aa]ssets/StreamingAssets/aa*
+/[Aa]ssets/AddressableAssetsData/link.xml*
+/[Aa]ssets/Addressables_Temp*
+/[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/*/*.bin*
+/[Aa]ssets/Unity.VisualScripting.Generated/VisualScripting.Flow/UnitOptions.bytes
+/[Aa]ssets/Unity.VisualScripting.Generated/VisualScripting.Flow/UnitOptions.bytes.meta
+/[Aa]ssets/Unity.VisualScripting.Generated/VisualScripting.Core/Property Providers
+/[Aa]ssets/Unity.VisualScripting.Generated/VisualScripting.Core/Property Providers.meta
+
+# ---------------------------------------------------------------------
+# Sistema operativo
+# ---------------------------------------------------------------------
+.DS_Store
+._*
+Thumbs.db
+ehthumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# ---------------------------------------------------------------------
+# Ferramentas locais (Claude Code)
+# ---------------------------------------------------------------------
+.claude/worktrees/
+.claude/settings.local.json
