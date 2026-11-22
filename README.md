@@ -145,7 +145,7 @@ Each zone (`CleanableZone`) reports a **cleanliness** value from 0 to 1. The `Ci
 
 | Cleanliness drives… | How |
 |---|---|
-| **Colour** | Saturation goes from grey to full colour (post-processing volume weight / material parameter), per zone and globally |
+| **Colour** | Each zone goes from grey to full colour on its own. The city art uses the `City Lit` shader, which reads a world-space colour map (`CityColorMap`, one region per zone, soft edges), so a cleaned zone is in colour from anywhere in the plaza. Trash and ecopontos always stay in colour, so they are easy to spot |
 | **Lights** | Street lights and shop signs turn on |
 | **Shops** | Shutters open, awnings unfold, windows light up |
 | **Air** | The smog fades and the sky clears |
@@ -190,7 +190,7 @@ Built with world-space uGUI canvases + XR Interaction Toolkit UI interaction.
 | Criterion | How the project answers it |
 |---|---|
 | **Interaction (8 pts)** | Gesture-based magic instead of buttons: telekinesis, circle whirlwind, aim-and-sweep water stream, raise-the-wand finale. Sorting with feedback. Haptics on the controller |
-| **Modeling & Animation (5 pts)** | Trash items, ecopontos, water, shops, street lights and pedestrians (Asset Store, credited). Grey→colour transformation, opening shutters, returning people, all reacting to the player |
+| **Modeling & Animation (5 pts)** | Our own Blender models (trash items, ecopontos, fountain, canal, market stalls, bus shelter, playground) plus Kenney city kits (credited). Grey→colour transformation, opening shutters, returning people, all reacting to the player |
 | **Creativity (5 pts)** | Magic in a real modern city, combined with a recycling message. The before/after of the plaza is the visual highlight |
 | **Navigation** | Smooth locomotion + snap/smooth turn, comfort vignette |
 | **Menus & widgets** | Start menu, wrist HUD, hint boards, end summary |
@@ -214,17 +214,35 @@ Built with world-space uGUI canvases + XR Interaction Toolkit UI interaction.
 
 ```
 Assets/_Project/
-├── Scenes/            # Main plaza scene, menu
+├── Scenes/            # CityPlaza (main scene), menu
 ├── Scripts/
 │   ├── Core/          # Game state, events, settings
 │   ├── Magic/         # Wand, gestures, spells
-│   ├── World/         # Zones, waste, bins, water, city reactions
+│   ├── World/         # Zones, waste, bins, water, city reactions (CityColorMap)
 │   └── UI/            # Menus, HUD, hint boards
-├── Prefabs/
-├── Art/               # Imported Asset Store packs (kept separate and credited)
-├── Materials/
+├── Shaders/           # City Lit (grey → colour per zone)
+├── Prefabs/           # Waste/, Ecoponto/, Environment/
+├── Art/
+│   ├── Models/        # Our own props (exported from ArtSource/)
+│   ├── Textures/      # ArcanePalette (shared colour palette)
+│   ├── Materials/
+│   └── ThirdParty/    # Kenney packs (kept separate and credited)
 └── Audio/
+
+ArtSource/             # Blender sources (outside Assets/)
+├── build_props.py     # Builds and exports every custom prop
+└── ArcaneProps.blend
 ```
+
+### Custom models
+
+All custom props (ecopontos, 12 trash items, fountain, canal, market stall, bus shelter, bench, playground, trash pile, finale plinth) are built **procedurally in Blender** by `ArtSource/build_props.py`. Every prop shares one palette texture and one material, which keeps draw calls low on the Quest. To change or add a prop, edit the script and run:
+
+```
+blender --background --factory-startup --python ArtSource/build_props.py
+```
+
+It exports the FBX files into `Assets/_Project/Art/Models/` and saves `ArtSource/ArcaneProps.blend`.
 
 Key components:
 
@@ -251,16 +269,16 @@ Key components:
 
 ### Phase 0: Setup
 - [ ] Quest 3 build working (Android profile, Meta OpenXR)
-- [ ] Testing without a headset through the XR Interaction Simulator
-- [ ] `_Project` folder structure
-- [ ] Greybox plaza with the four zones and the player rig
+- [x] Testing without a headset through the XR Interaction Simulator
+- [x] `_Project` folder structure
+- [x] Plaza with the four zones and the player rig (`CityPlaza` scene, 40 × 40 m, boundary walls)
 
 ### Phase 1: Telekinesis and sorting (core loop)
-- [ ] `Wand` with its modes, colour and trail
-- [ ] `TelekinesisController`: lift, follow, push/pull, release and throw
-- [ ] `WasteItem` + `WasteCategory` + floating label
-- [ ] `RecyclingBin` with correct and wrong feedback (VFX, SFX, haptics)
-- [ ] One zone playable end to end
+- [x] `Wand` with colour and trail (modes come with the other spells)
+- [x] Telekinesis: lift, follow, push/pull, release and throw (XRI `XRGrabInteractable` with far attach + velocity tracking, trigger to hold)
+- [x] `WasteItem` + `WasteCategory` + floating label
+- [x] `RecyclingBin` with correct and wrong feedback (VFX, SFX, haptics)
+- [x] All four zones playable end to end: sorting raises each zone's colour
 
 ### Phase 2: Spells and zones
 - [ ] `GestureTracker` + Whirlwind (circle) with dust piles and smog clearing
@@ -270,9 +288,10 @@ Key components:
 - [ ] All four zones greyboxed and playable
 
 ### Phase 3: Art pass
-- [ ] Stylized low-poly **modern city** assets: buildings, shops, street props, bus stop, fountain, canal
-- [ ] Trash items and ecoponto models
-- [ ] Grey→colour transformation, lights, shop shutters, clearing smog
+- [x] Stylized low-poly **modern city** assets: buildings, shops, street props, bus stop, fountain, canal
+- [x] Trash items and ecoponto models
+- [x] Grey→colour per zone (`City Lit` shader + `CityColorMap`)
+- [ ] Lights, shop shutters, clearing smog and a grey sky that clears
 - [ ] Pedestrians, cyclists and pigeons returning (animated)
 
 ### Phase 4: Experience and UI
@@ -322,6 +341,8 @@ Key components:
 - A Meta Quest 3 / 3S for testing on device. Headsets can be booked at the GIG: <https://s.up.pt/rucw> (mention you are an RVA student).
 
 ### In the Editor, without a headset
+Open `Assets/_Project/Scenes/CityPlaza.unity` (the main scene, first in the build list) and press Play.
+
 The project uses the **XR Interaction Simulator** (XR Interaction Toolkit sample), which is added automatically in Play mode.
 
 - Enabled in `Assets/XRI/Settings/Resources/XRDeviceSimulatorSettings.asset`.
@@ -336,6 +357,16 @@ Controls:
 | Look around | Hold the right mouse button + move the mouse |
 | Other bindings (switch between headset and controllers, trigger, grip) | Shown in the on-screen panel |
 
+### How to play in the simulator
+
+1. Press Play and click inside the Game view.
+2. Look around with the **right mouse button** and walk with `W` `A` `S` `D`.
+3. Aim the wand (right controller) at a piece of trash and **hold `T`** (trigger) to lift it. A label shows what it is and which bin it belongs in.
+4. Push the item away or pull it closer with `I` / `K` (thumbstick).
+5. Bring it to the opening of the matching ecoponto: the bin swallows it and the zone gains colour. If the bin is wrong, it spits the item back and the right bin glows.
+
+Hold `Shift` to use the left controller instead.
+
 ### On the Quest
 1. Switch the build profile to **Android**.
 2. Make sure **OpenXR → Meta Quest** is enabled in XR Plug-in Management (Android tab).
@@ -349,7 +380,13 @@ Third-party assets used in the project:
 
 | Asset | Author | Link | License |
 |---|---|---|---|
-| *TBD* | | | |
+| City Kit (Commercial) | Kenney | <https://kenney.nl/assets/city-kit-commercial> | CC0 |
+| City Kit (Roads) | Kenney | <https://kenney.nl/assets/city-kit-roads> | CC0 |
+| City Kit (Suburban) | Kenney | <https://kenney.nl/assets/city-kit-suburban> | CC0 |
+| Interface Sounds | Kenney | <https://kenney.nl/assets/interface-sounds> | CC0 |
+| Impact Sounds | Kenney | <https://kenney.nl/assets/impact-sounds> | CC0 |
+
+All other props are made by the team (see [Custom models](#custom-models)).
 
 ### Team
 
